@@ -23,15 +23,17 @@ model Listing {
   quantity    Int      @default(0)
   sold        Int      @default(0)
   status      Int      @default(0)  // 0 pending, 1 Paid, 2 Cancelled
-  uid         String   @db.VarChar(5)
-  txn_hash    String?
+  uid         String   @db.VarChar(5) @unique
   seller      User     @relation("sellerListings", fields: [sellerId], references: [id])
   buyer       User?    @relation("buyerListings", fields: [buyerId], references: [id])
   createdAt   DateTime @default(now())
-
+  payments ListingPayment[]
+  
   @@index([sellerId])
   @@index([buyerId])
   @@index([status])
+
+  @@map("listings")
 }
 
 model User {
@@ -41,5 +43,17 @@ model User {
   email     String?
   sellerListings Listing[] @relation("sellerListings")
   buyerListings Listing[] @relation("buyerListings")
+
+  @@map("users")
 }
 
+model ListingPayment {
+  id String @id @default(cuid())
+  listingId String
+  txn_hash String
+  createdAt   DateTime @default(now())
+
+  listing      Listing     @relation(fields: [listingId], references: [id])
+
+  @@map("link_payments")
+}
