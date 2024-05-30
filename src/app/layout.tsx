@@ -37,7 +37,7 @@ export default function RootLayout({
         >
           <Pancake>
             <Navbar />
-            <main className="px-4 py-4 mb-4 lg:py-0">{children}</main>
+            <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
             <MobileNav />
           </Pancake>
         </ThemeProvider>
