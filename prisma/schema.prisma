@@ -13,7 +13,7 @@ model Listing {
   buyerId     String?
   title       String   @db.VarChar(255)
   description String
-  amount      Float
+  rate      Float
   quantity    Int      @default(0)
   sold        Int      @default(0)
   status      Int      @default(0)  // 0 pending, 1 Paid, 2 Cancelled
@@ -44,10 +44,12 @@ model User {
 model ListingPayment {
   id String @id @default(cuid())
   listingId String
+  amount Float
+  seller String
   txn_hash String
   createdAt   DateTime @default(now())
   
   listing      Listing     @relation(fields: [listingId], references: [id])
 
-  @@map("link_payments")
+  @@map("listing_payments")
 }

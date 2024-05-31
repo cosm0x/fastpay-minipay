@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "interfaces/IERC20.sol";
+import "./interfaces/IERC20.sol";
+
+//https://alfajores.celoscan.io/address/0x1Ff189C2FBaD76e648aF0916529852324F3e689a
 
 contract FastPay {
   address public cusdAddress; //cUSD
@@ -110,7 +112,9 @@ contract FastPay {
     uint _quantity,
     uint _amount
   ) external {
+    //retrieve the listing
     Listing storage listing = listings[_id][_seller];
+
     //calculate price
     uint price = listing.rate * _quantity;
 
@@ -121,11 +125,11 @@ contract FastPay {
     require(_quantity <= listing.quantity, "Invalid quantity");
     require(_amount >= price, "Invalid amount");
 
-    //calculate charge -
-    // note: Fastpay only charges on rate, not on quantity for sellers cheaper experience
+    // calculate charge -
+    // note: Fastpay only charges on rate, not on quantity for sellers cheaper experience 😊
     uint charge = deductCharge(listing.rate);
 
-    //transfer balance after charge to seller
+    //transfer balance to seller after charge
     IERC20(cusdAddress).transferFrom(
       msg.sender,
       listing.seller,
@@ -137,6 +141,7 @@ contract FastPay {
     listing.buyer = msg.sender;
     listing.quantity -= _quantity;
 
+    // check if listing is sold out
     if (listing.quantity == 0) {
       listing.status = Status.COMPLETED;
     } else {
@@ -147,7 +152,7 @@ contract FastPay {
   }
 
   function deductCharge(uint256 _amount) internal pure returns (uint256) {
-    uint256 fee = _amount / 100; // 1%
+    uint256 fee = _amount / 1000; // 0.1%
 
     return fee;
   }

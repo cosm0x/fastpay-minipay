@@ -7,6 +7,7 @@ import Navbar from "@/components/ui/Navbar";
 import MobileNav from "@/components/MobileNav";
 import WagmiProvider from "@/providers/wagmi-provider";
 import ConnectMinipay from "@/components/ConnectMinipay";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +42,7 @@ export default function RootLayout({
               <Pancake>
                 <Navbar />
                 <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
+                <Toaster />
                 <MobileNav />
               </Pancake>
             </ConnectMinipay>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import resolveUser from "@/helpers/resolveUser";
+import prisma from "../../../../../../prisma";
 
 export const GET = async (
   request: Request,
@@ -8,7 +9,16 @@ export const GET = async (
   try {
     //resolves user
     const user = await resolveUser(params.address);
-    return NextResponse.json({ user });
+
+    const payments = await prisma.listingPayment.findMany({
+      where: {
+        seller: params.address,
+      },
+    });
+
+    console.log(payments);
+
+    return NextResponse.json({ payments });
   } catch (e) {
     console.log(e);
     return NextResponse.json({ msg: "Bad Request" }, { status: 500 });
