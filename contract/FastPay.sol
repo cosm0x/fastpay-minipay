@@ -9,6 +9,7 @@ contract FastPay {
   enum Status {
     PENDING,
     PAID,
+    COMPLETED,
     CANCELLED
   }
 
@@ -16,7 +17,8 @@ contract FastPay {
     bytes32 id;
     address seller;
     address buyer;
-    uint256 amount;
+    uint256 rate;
+    uint quantity;
     Status status;
   }
 
@@ -26,26 +28,33 @@ contract FastPay {
   bytes32[] listingKeys;
   mapping(address => bytes32[]) addressToListing;
 
-  event newListing(bytes32 indexed id, address indexed seller, uint256 amount);
+  event newListing(
+    bytes32 indexed id,
+    address indexed seller,
+    uint256 rate,
+    uint256 quantity
+  );
 
   event ListingPaid(
     bytes32 indexed id,
     address indexed seller,
     address indexed buyer,
-    uint amount
+    uint amount,
+    uint quantity
   );
 
   constructor(address _cusdAddress) {
     cusdAddress = _cusdAddress;
   }
 
-  function addListing(bytes32 _id, uint _amount) public {
+  function addListing(bytes32 _id, uint _rate, uint _quantity) public {
     // Store listing to user
     listings[_id][msg.sender] = Listing({
       id: _id,
       seller: msg.sender,
       buyer: address(0),
-      amount: _amount,
+      rate: _rate,
+      quantity: _quantity,
       status: Status.PENDING
     });
 
@@ -98,25 +107,43 @@ contract FastPay {
   function payForListing(
     bytes32 _id,
     address _seller,
-    uint256 _amount
+    uint _quantity,
+    uint _amount
   ) external {
     Listing storage listing = listings[_id][_seller];
+    //calculate price
+    uint price = listing.rate * _quantity;
 
-    require(listing.status == Status.PENDING, "Invalid listing");
-    require(_amount >= listing.amount, "Insufficient amount");
+    require(
+      listing.status == Status.PENDING || listing.status == Status.PAID,
+      "Invalid listing"
+    );
+    require(_quantity <= listing.quantity, "Invalid quantity");
+    require(_amount >= price, "Invalid amount");
 
-    //calculate charge
-    uint256 balanceAfterCharge = listing.amount - deductCharge(listing.amount);
+    //calculate charge -
+    // note: Fastpay only charges on rate, not on quantity for sellers cheaper experience
+    uint charge = deductCharge(listing.rate);
 
-    //transfer payment to seller after charge
+    //transfer balance after charge to seller
     IERC20(cusdAddress).transferFrom(
       msg.sender,
       listing.seller,
-      balanceAfterCharge
+      price - charge
     );
+    //deduct charge
+    IERC20(cusdAddress).transferFrom(msg.sender, address(this), charge);
 
     listing.buyer = msg.sender;
-    listing.status = Status.PAID;
+    listing.quantity -= _quantity;
+
+    if (listing.quantity == 0) {
+      listing.status = Status.COMPLETED;
+    } else {
+      listing.status = Status.PAID;
+    }
+
+    emit ListingPaid(_id, _seller, msg.sender, _amount, _quantity);
   }
 
   function deductCharge(uint256 _amount) internal pure returns (uint256) {
