@@ -52,7 +52,7 @@ model ListingPayment {
   listingId String
   txn_hash String
   createdAt   DateTime @default(now())
-
+  
   listing      Listing     @relation(fields: [listingId], references: [id])
 
   @@map("link_payments")

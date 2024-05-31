@@ -54,10 +54,6 @@ function formatUnixTimestamp(timestamp: string | BigInt): string {
   return formattedDate;
 }
 
-// Test the function
-const unixTimestamp: number = 1715112728;
-console.log(formatUnixTimestamp(unixTimestamp)); // Output: May 7, 2024 | 18:22
-
 const isValidAddress = (address: string) => {
   return /^(0x)?[0-9a-f]{40}$/i.test(address);
 };

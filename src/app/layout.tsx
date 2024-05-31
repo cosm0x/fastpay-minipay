@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
-import Pancake from "../components/ui/Pancake";
-import Navbar from "../components/ui/Navbar";
-import Footer from "../components/ui/Footer";
-import MobileNav from "../components/MobileNav";
+import Pancake from "@/components/ui/Pancake";
+import Navbar from "@/components/ui/Navbar";
+import MobileNav from "@/components/MobileNav";
+import WagmiProvider from "@/providers/wagmi-provider";
+import ConnectMinipay from "@/components/ConnectMinipay";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,11 +36,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Pancake>
-            <Navbar />
-            <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
-            <MobileNav />
-          </Pancake>
+          <WagmiProvider>
+            <ConnectMinipay>
+              <Pancake>
+                <Navbar />
+                <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
+                <MobileNav />
+              </Pancake>
+            </ConnectMinipay>
+          </WagmiProvider>
         </ThemeProvider>
       </body>
     </html>
