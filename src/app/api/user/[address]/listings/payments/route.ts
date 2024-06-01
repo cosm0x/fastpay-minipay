@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import resolveUser from "@/helpers/resolveUser";
-import prisma from "../../../../../../prisma";
+import prisma from "../../../../../../../prisma";
 
 export const GET = async (
   request: Request,
@@ -12,7 +12,7 @@ export const GET = async (
 
     const payments = await prisma.listingPayment.findMany({
       where: {
-        seller: params.address,
+        seller: user.address,
       },
     });
 

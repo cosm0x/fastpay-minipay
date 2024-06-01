@@ -47,7 +47,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const { address } = useAccount();
   const { toast } = useToast();
 
-  const getLink = async () => {
+  const getListing = async () => {
     const { data } = await axios.get(
       `/api/user/${address}/listings/${params?.id}`
     );
@@ -56,14 +56,14 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   };
 
   const { isPending, data: listing } = useQuery({
-    queryKey: ["single"],
-    queryFn: getLink,
+    queryKey: ["listing"],
+    queryFn: getListing,
     enabled: !!address,
   });
 
   const copyLink = () => {
     navigator.clipboard
-      .writeText(`https://fastpay.xx/pay/${listing?.uuid}`)
+      .writeText(`https://fastpay.xx/pay/${params?.id}`)
       .then(() => {
         toast({
           description: "Listing link copied",
@@ -133,7 +133,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
           <Separator className="my-2" />
           <div className="font-semibold">Description</div>
-          <p className="text-muted-foreground">Lorem ipsum dolor sit amet.</p>
+          <p className="text-muted-foreground">{listing?.description}</p>
 
           <Separator className="my-2" />
 
