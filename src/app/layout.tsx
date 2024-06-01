@@ -42,7 +42,6 @@ export default function RootLayout({
               <Navbar />
               <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
               <Toaster />
-              <MobileNav />
             </Pancake>
           </WagmiProvider>
         </ThemeProvider>

@@ -12,6 +12,17 @@ import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -26,22 +37,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { Separator } from "@/components/ui/separator";
 import { CopyIcon } from "lucide-react";
-import qr from "../../../../public/img/qr.png";
+import qr from "../../../../../public/img/qr.png";
 import Image from "next/image";
 import { useAccount } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { formatDate } from "@/helpers";
+import Payments from "@/components/Payments";
 
 export default function ListingPage({ params }: { params: { id: string } }) {
   const { address } = useAccount();
@@ -87,7 +92,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           <Button variant="outline" size="icon" className="h-8 w-8">
             <CopyIcon className="w-3.5 h-3.5" onClick={() => copyLink()} />
           </Button>
-          <Dialog>
+          <AlertDialog>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="icon" variant="outline" className="h-8 w-8">
@@ -96,9 +101,9 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DialogTrigger asChild>
+                <AlertDialogTrigger asChild>
                   <DropdownMenuItem>Payments</DropdownMenuItem>
-                </DialogTrigger>
+                </AlertDialogTrigger>
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Edit</DropdownMenuItem>
@@ -107,16 +112,18 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+            <AlertDialogContent>
+              <AlertDialogHeader className="text-left">
+                <AlertDialogDescription>
+                  Listing Payments
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <Payments />
+              <AlertDialogFooter className="flex justify-end items-center w-full">
+                <AlertDialogCancel className="w-fit">Close</AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardHeader>
       <CardContent className="p-6 text-sm">

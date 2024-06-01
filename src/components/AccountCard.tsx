@@ -16,11 +16,9 @@ const AccountCard = () => {
   const { address, isConnecting } = useAccount();
 
   const getTotalPayments = async () => {
-    const { data } = await axios.get(
-      `/api/user/${address}/listings/total-payments`
-    );
+    const { data } = await axios.get(`/api/user/${address}/listings/payments`);
 
-    return data.payments;
+    return data;
   };
 
   const { isPending: isLoading, data: payments } = useQuery({
@@ -32,7 +30,7 @@ const AccountCard = () => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-4xl">${payments}</CardTitle>
+        <CardTitle className="text-4xl">${payments?.totalPayments}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-xs text-muted-foreground">+received so far</div>

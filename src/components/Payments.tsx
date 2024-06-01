@@ -1,26 +1,31 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { useAccount } from "wagmi";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import Payment from "./Payment";
 
 const Payments = () => {
+  const { address, isConnecting } = useAccount();
+
+  const getPayments = async () => {
+    const { data } = await axios.get(`/api/user/${address}/listings/payments`);
+
+    return data;
+  };
+
+  const { isPending: isLoading, data: payments } = useQuery({
+    queryKey: ["user", address],
+    queryFn: getPayments,
+    enabled: !!address,
+  });
+
   return (
-    <Dialog>
-      <DialogTrigger>Open</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
+    <div className="flex flex-col gap-y-3">
+      <Payment />
+
+      <Payment />
+
+      <Payment />
+    </div>
   );
 };
 export default Payments;

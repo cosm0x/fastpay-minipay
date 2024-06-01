@@ -18,6 +18,8 @@ export const GET = async (
 
     console.log(payments);
 
+    //return {payments: [], totalPayments: 34}
+
     return NextResponse.json({ payments });
   } catch (e) {
     console.log(e);

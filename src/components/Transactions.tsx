@@ -27,7 +27,7 @@ export default function Transactions() {
   const getTransactions = async () => {
     const { data } = await axios.get(`/api/user/${address}/listings/payments`);
     console.log(data);
-    return data.payments;
+    return data;
   };
 
   const { isPending, data: transactions } = useQuery({

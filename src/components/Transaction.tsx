@@ -1,11 +1,9 @@
-import { Down } from "@/icons";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
-
-const Transaction = ({ listing }) => {
-  console.log(listing);
+import { Listing } from "@prisma/client";
+const Transaction = ({ listing }: { listing: Listing }) => {
   return (
-    <Link href={`/listings/${listing?.id}`} className="flex flex-col gap-y-4">
+    <Link href={`/listings/${listing?.uid}`} className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between border bg-card p-3 rounded-md">
         <div className="flex gap-x-2 justify-start items-center">
           <div className="flex flex-col items-start justify-start gap-x-2 ">
