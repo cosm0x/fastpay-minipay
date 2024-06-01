@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -6,6 +8,7 @@ import {
   MoreVertical,
   Truck,
 } from "lucide-react";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,23 +35,57 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { CopyIcon, CopyCheckIcon } from "lucide-react";
+import { CopyIcon } from "lucide-react";
 import qr from "../../../../public/img/qr.png";
 import Image from "next/image";
+import { useAccount } from "wagmi";
+import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
+import { formatDate } from "@/helpers";
 
-export default function Component() {
+export default function ListingPage({ params }: { params: { id: string } }) {
+  const { address } = useAccount();
+  const { toast } = useToast();
+
+  const getLink = async () => {
+    const { data } = await axios.get(
+      `/api/user/${address}/listings/${params?.id}`
+    );
+
+    return data;
+  };
+
+  const { isPending, data: listing } = useQuery({
+    queryKey: ["single"],
+    queryFn: getLink,
+    enabled: !!address,
+  });
+
+  const copyLink = () => {
+    navigator.clipboard
+      .writeText(`https://fastpay.xx/pay/${listing?.uuid}`)
+      .then(() => {
+        toast({
+          description: "Listing link copied",
+          duration: 2000,
+        });
+      });
+  };
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Ankara Textile
+            {listing?.title}
           </CardTitle>
-          <CardDescription>Date: November 23, 2023</CardDescription>
+          <CardDescription>
+            Date: {formatDate(listing?.createdAt)}
+          </CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <Button variant="outline" size="icon" className="h-8 w-8">
-            <CopyIcon className="w-3.5 h-3.5" />
+            <CopyIcon className="w-3.5 h-3.5" onClick={() => copyLink()} />
           </Button>
           <Dialog>
             <DropdownMenu>
@@ -84,23 +121,42 @@ export default function Component() {
       </CardHeader>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
-          <div className="font-semibold">Order Details</div>
+          <div className="font-semibold">Listing Details</div>
           <ul className="grid gap-3">
             <li className="flex items-center justify-between">
               <span className="text-muted-foreground">
-                Ankara Textile x <span>2</span>
+                {listing?.title} x <span>{listing?.quantity}</span>
               </span>
-              <span>$250.00</span>
+              <span>${listing?.rate}</span>
             </li>
           </ul>
-          <Separator className="my-2" />
 
+          <Separator className="my-2" />
           <div className="font-semibold">Description</div>
           <p className="text-muted-foreground">Lorem ipsum dolor sit amet.</p>
 
           <Separator className="my-2" />
 
-          <div className="grid gap-3">
+          <ul className="grid gap-3">
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">
+                Charge <span></span>
+              </span>
+              <span>${0.001 * listing?.rate}</span>
+            </li>
+
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">You'll receive</span>
+              <span>
+                ${(listing?.rate - 0.001 * listing?.rate) * listing?.quantity}
+              </span>
+            </li>
+          </ul>
+          <ul className="grid gap-3"></ul>
+
+          <Separator className="my-2" />
+
+          <div className="grid gap-3 w-[60%] mx-auto">
             <Image src={qr} alt="product qr code" />
           </div>
         </div>

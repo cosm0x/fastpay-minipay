@@ -14,7 +14,7 @@ model Listing {
   title       String   @db.VarChar(255)
   description String
   rate      Float
-  quantity    Int      @default(0)
+  quantity    Int      @default(1)
   sold        Int      @default(0)
   status      Int      @default(0)  // 0 pending, 1 Paid, 2 Cancelled
   uid         String   @db.VarChar(5) @unique
