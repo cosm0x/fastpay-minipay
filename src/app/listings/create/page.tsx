@@ -1,96 +1,132 @@
 "use client";
 
-import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Minus } from "lucide-react";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import fastpay from "@/constants/fastpay";
+import { parseEther, stringToHex } from "viem";
+import { createListing } from "@/actions";
+import { useFormState, useFormStatus } from "react-dom";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import {
+  useWriteContract,
+  useSimulateContract,
+  useAccount,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 
-export const Create = () => {
+export default function Create() {
   const { address } = useAccount();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [listing, setListing] = useState({
+  const { toast } = useToast();
+  const { writeContractAsync, data: hash } = useWriteContract();
+
+  const [isLoading, setIsLoading] = useState(false);
+  // to control quantity input
+  const [quantity, setQuantity] = useState(1);
+
+  const initialState = {
     title: "",
     rate: 0,
-    quantity: 1,
+    quantity,
     description: "",
-  });
-
-  const handleInput = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setListing((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
+  // form status
+  const { pending } = useFormStatus();
+
+  //@ts-ignore
+  const [newListing, formAction] = useFormState(createListing, initialState);
+
+  // increase quantity
   const increment = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (listing.quantity >= 1) {
-      setListing((prev) => ({
-        ...prev,
-        quantity: prev.quantity + 1,
-      }));
-    }
+    quantity >= 1 && setQuantity(quantity + 1);
   };
 
+  // decrease quantity
   const decrement = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    listing.quantity > 1 &&
-      setListing((prev) => ({
-        ...prev,
-        quantity: prev.quantity - 1,
-      }));
+    quantity > 1 && setQuantity(quantity - 1);
   };
 
-  const createListing = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-    const { data } = await axios.post("/api/create-listing", {
-      ...listing,
-      seller: address,
-    });
-    return data;
-  };
-
-  const { mutate, data, isPending } = useMutation({
-    mutationFn: createListing,
-    onSuccess: ({ uid }) => {
-      toast({
-        title: "Success",
-        description: "Listing created successfully",
-      });
-      queryClient.invalidateQueries({ queryKey: ["links"] });
-      queryClient.invalidateQueries({ queryKey: ["tnxs"] });
-      router.push(`/listings/${uid}`);
+  //simulate contract to validate args
+  const { data, status, isFetching } = useSimulateContract({
+    //@ts-ignore
+    address: fastpay?.address,
+    abi: fastpay?.abi,
+    functionName: "addListing",
+    args: [
+      stringToHex(newListing?.id, { size: 32 }),
+      parseEther(`${newListing?.rate}` || "0"),
+      `${newListing.quantity}`,
+    ],
+    query: {
+      enabled: !!newListing,
     },
   });
 
+  //write listing to smart contract
+  const write0x = async () => {
+    await writeContractAsync?.(data!.request);
+    toast({
+      title: "Success",
+      description: "Listing created successfully!",
+    });
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
+    queryClient.invalidateQueries({ queryKey: ["tnxs"] });
+  };
+
+  const { status: confirmStatus } = useWaitForTransactionReceipt({
+    hash,
+    confirmations: 1,
+  });
+
+  //watch for listing creation
+  useEffect(() => {
+    //activate loader
+    if (newListing.status === 0) {
+      setIsLoading(true);
+      //write listing to smart contract when validation is success
+      if (status === "success") {
+        write0x();
+      }
+    }
+  }, [newListing, status]);
+
+  //watch for on-chain confirmation
+  useEffect(() => {
+    if (confirmStatus === "success") {
+      //@ts-ignore switch to listing view
+      router.push(`/listings/${newListing.uid}`);
+    }
+  }, [confirmStatus]);
+
   return (
     <div className="relative flex-col items-start gap-8 md:flex">
-      <form
-        className="grid w-full items-start gap-6"
-        onSubmit={(e) => mutate(e)}
-      >
+      <ConnectButton />
+      <form action={formAction} className="grid w-full items-start gap-6">
         <fieldset className="grid gap-6 rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">
             Create a listing
           </legend>
+
+          <input
+            type="text"
+            name="address"
+            value={address}
+            aria-hidden
+            hidden
+          />
 
           <div className="grid gap-3">
             <Label htmlFor="temperature">Title</Label>
@@ -99,19 +135,12 @@ export const Create = () => {
               type="text"
               placeholder="Ankara textile"
               name="title"
-              onChange={(e) => handleInput(e)}
             />
           </div>
 
           <div className="grid gap-3">
             <Label htmlFor="rate">Price</Label>
-            <Input
-              id="rate"
-              type="number"
-              placeholder="200"
-              name="rate"
-              onChange={(e) => handleInput(e)}
-            />
+            <Input id="rate" type="number" placeholder="200" name="rate" />
           </div>
 
           <div className="grid gap-3">
@@ -122,8 +151,8 @@ export const Create = () => {
                 type="number"
                 placeholder="5"
                 name="quantity"
-                value={listing?.quantity}
-                onChange={(e) => handleInput(e)}
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
               />
 
               <div className="flex items-center justify-between gap-x-2">
@@ -154,13 +183,12 @@ export const Create = () => {
               placeholder="You are a..."
               className="min-h-4"
               name="description"
-              onChange={(e) => handleInput(e)}
             />
           </div>
 
           <div className="grid gap-3">
-            <Button disabled={isPending} size="lg">
-              {isPending && (
+            <Button disabled={pending || isLoading} size="lg">
+              {(pending || isLoading) && (
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
               )}
               Create listing
@@ -170,6 +198,4 @@ export const Create = () => {
       </form>
     </div>
   );
-};
-
-export default Create;
+}
