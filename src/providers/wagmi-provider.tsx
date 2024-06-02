@@ -14,9 +14,7 @@ export default function WagmiProvider({
 }) {
   return (
     <Wagmi config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>{children}</RainbowKitProvider>
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </Wagmi>
   );
 }

@@ -38,12 +38,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <WagmiProvider>
-            <Pancake>
-              <Navbar />
-              <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
-
-              <Toaster />
-            </Pancake>
+            <ConnectMinipay>
+              <Pancake>
+                <Navbar />
+                <main className="px-4 py-4 mb-24 lg:py-0">{children}</main>
+                <Toaster />
+              </Pancake>
+            </ConnectMinipay>
           </WagmiProvider>
         </ThemeProvider>
       </body>
