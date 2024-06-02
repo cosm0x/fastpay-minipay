@@ -12,6 +12,8 @@ import {
   useSimulateContract,
   useWaitForTransactionReceipt,
   useWriteContract,
+  useReadContract,
+  useBlockNumber,
 } from "wagmi";
 import {
   AlertDialog,
@@ -24,13 +26,21 @@ import { usePayment } from "@/hooks/usePayment";
 import cusd from "@/constants/cusd";
 import fastpay from "@/constants/fastpay";
 import { updateListing } from "@/actions";
-import { parseEther, stringToHex } from "viem";
+import { formatEther, parseEther, stringToHex } from "viem";
 import { Listing as ListingType } from "@prisma/client";
 import { useEffect } from "react";
 import PaymentCard from "@/components/PaymentCard";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useFormState } from "react-dom";
 import { text } from "stream/consumers";
+
+//initial state for form action
+const initialState = {
+  listingId: "",
+  amount: "",
+  buyer: "",
+  quantity: "",
+};
 
 export default function ListingPage({ params }: { params: { id: string } }) {
   const { address } = useAccount();
@@ -42,20 +52,39 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const buttonRef = useRef(null);
   const [txt, setTxt] = useState("approving");
   const [check, setCheck] = useState(0);
-
-  //initial state for form action
-  const initialState = {
-    listingId: "",
-    amount: "",
-    buyer: "",
-    quantity: "",
-  };
-
+  const [available, setAvailable] = useState(0);
   //@ts-ignore to update payment
   const [message, formAction] = useFormState(updateListing, initialState);
-
   // to control quantity input
   const [quantity, setQuantity] = useState(1);
+  const [soldOut, setSoldOut] = useState(false);
+
+  const bn = useBlockNumber({
+    watch: true,
+  });
+
+  //check approval
+  const { data: allowance, refetch: reloadAllowance } = useReadContract({
+    abi: cusd?.abi,
+    address: cusd?.address,
+    functionName: "allowance",
+    args: [address, fastpay?.address],
+  });
+
+  //check balance
+  const { data: balance, refetch: reloadBal } = useReadContract({
+    abi: cusd?.abi,
+    address: cusd?.address,
+    functionName: "balanceOf",
+    args: [address],
+  });
+
+  //updates simulation
+  useEffect(() => {
+    reloadAllowance();
+    reloadBal();
+    refetch();
+  }, [bn]);
 
   const getListing = async () => {
     const { data } = await axios.get(
@@ -74,7 +103,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   // increase quantity
   const increment = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    quantity < listing?.quantity && setQuantity(quantity + 1);
+    quantity < available && setQuantity(quantity + 1);
   };
 
   // decrease quantity
@@ -138,13 +167,15 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       `${quantity}`,
       `${totalAmount}`,
     ],
-    // enabled when approval is successful
-    // query: {
-    //   enabled: approvalStatus === "success",
-    // },
   });
 
   console.log(failureReasonTd);
+  console.log(
+    stringToHex(listing?.id, { size: 32 }),
+    listing?.seller?.address,
+    `${quantity}`,
+    `${totalAmount}`
+  );
 
   const { status: paidStatus } = useWaitForTransactionReceipt({
     hash: payHash,
@@ -201,8 +232,18 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     }
   }, [paidStatus]);
 
+  //update available quantity
+  useEffect(() => {
+    if (listing?.quantity - listing?.sold == 0) {
+      setSoldOut(true);
+    } else {
+      setAvailable(listing?.quantity - listing?.sold);
+    }
+  }, [listing]);
+
   return (
     <>
+      {/* Form to update succesful payment */}
       <form action={formAction} method="post">
         <input type="text" name="quantity" value={quantity} hidden />
         <input type="text" name="listingId" value={listing?.id} hidden />
@@ -218,27 +259,30 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       <Card className="overflow-hidden">
         <CardHeader className="flex flex-row items-start bg-muted/50">
           <div className="grid gap-0.5">
-            <CardTitle className="group flex items-center gap-2 text-lg">
-              {listing?.title}
+            <CardTitle className="group flex justify-between items-center gap-2 text-lg">
+              {listing?.title} <div>{formatEther(allowance || "0")}</div>
             </CardTitle>
           </div>
-          <ConnectButton />
+          {/* <ConnectButton /> */}
         </CardHeader>
         <CardContent className="p-6 text-sm">
           <div className="grid gap-3">
-            <div className="font-semibold">Listing Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">
-                  {listing?.title} x <span>{quantity}</span>
-                </span>
-                <span>${listing?.rate?.toFixed(2)}</span>
-              </li>
-            </ul>
-
-            <Separator className="my-2" />
             <div className="font-semibold">Description</div>
             <p className="text-muted-foreground">{listing?.description}</p>
+
+            <Separator className="my-2" />
+
+            <div className="font-semibold">Order Details</div>
+            <ul className="grid gap-3">
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Price</span>
+                <span>${listing?.rate?.toFixed(2)}</span>
+              </li>
+
+              <li className="flex items-center justify-end">
+                <span className="text-muted-foreground">x {quantity}</span>
+              </li>
+            </ul>
 
             <Separator className="my-2" />
 
@@ -246,6 +290,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Total</span>
                 <span>${(listing?.rate * quantity)?.toFixed(2)}</span>
+              </li>
+
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Acct Balance</span>
+                <span>${formatEther(balance || "0")}</span>
               </li>
             </ul>
             <ul className="grid gap-3"></ul>
@@ -275,9 +324,10 @@ export default function ListingPage({ params }: { params: { id: string } }) {
               <Button
                 size="lg"
                 onClick={() => handleApproval()}
+                disabled={soldOut}
                 className="w-full"
               >
-                Make payment
+                {soldOut ? "Sold Out " : "Make payment"}
               </Button>
             </div>
           </div>

@@ -128,42 +128,50 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       </CardHeader>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
+          <div className="font-semibold">Description</div>
+          <p className="text-muted-foreground">{listing?.description}</p>
+          <Separator className="my-2" />
+
           <div className="font-semibold">Listing Details</div>
           <ul className="grid gap-3">
             <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">
-                {listing?.title} x <span>{listing?.quantity}</span>
-              </span>
+              <span className="text-muted-foreground">Price</span>
               <span>${listing?.rate}</span>
+            </li>
+
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">
+                x <span>{listing?.quantity}</span>
+              </span>
+              <span>${listing?.quantity * listing?.rate}</span>
             </li>
           </ul>
 
           <Separator className="my-2" />
-          <div className="font-semibold">Description</div>
-          <p className="text-muted-foreground">{listing?.description}</p>
+          <ul className="grid gap-3">
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">
+                Sold x {listing?.sold}
+              </span>
+              <span>${listing?.sold * listing?.rate}</span>
+            </li>
+          </ul>
 
-          <Separator className="my-2" />
+          {/* <Separator className="my-2" />
 
           <ul className="grid gap-3">
             <li className="flex items-center justify-between">
               <span className="text-muted-foreground">
-                Charge <span></span>
+                charge <span></span>
               </span>
-              <span>${0.001 * listing?.rate}</span>
-            </li>
-
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">You'll receive</span>
-              <span>
-                ${(listing?.rate - 0.001 * listing?.rate) * listing?.quantity}
-              </span>
+              <span>${(0.001 * listing?.rate).toFixed(2)}</span>
             </li>
           </ul>
-          <ul className="grid gap-3"></ul>
+          <ul className="grid gap-3"></ul> */}
 
           <Separator className="my-2" />
 
-          <div className="grid gap-3 w-[60%] mx-auto">
+          <div className="grid gap-3 w-[50%] mx-auto">
             <Image src={qr} alt="product qr code" />
           </div>
         </div>

@@ -6,16 +6,23 @@ const Transaction = ({ listing }: { listing: Listing }) => {
     <Link href={`/listings/${listing?.uid}`} className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between border bg-card p-3 rounded-md">
         <div className="flex gap-x-2 justify-start items-center">
-          <div className="flex flex-col items-start justify-start gap-x-2 ">
+          <div className="flex items-center gap-x-1">
             <small className=" ">{listing?.title}</small>
+            {listing?.quantity > 1 && (
+              <small className="text-muted-foreground">
+                x{listing?.quantity}
+              </small>
+            )}
           </div>
         </div>
         <div className="flex flex-col items-center gap-x-2">
           <div className="flex items-center gap-x-2">
-            <Badge className="text-xs" variant="secondary">
-              Fulfilled
-            </Badge>
-            <p>${listing?.rate * listing?.quantity}</p>
+            {listing?.quantity - listing?.sold == 0 && (
+              <Badge className="text-xs" variant="secondary">
+                SoldOut
+              </Badge>
+            )}
+            <p className="text-sm">${listing?.rate * listing?.quantity}</p>
           </div>
         </div>
       </div>

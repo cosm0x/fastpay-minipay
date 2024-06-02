@@ -47,12 +47,30 @@ export async function updateListing(prevState: any, formData: FormData) {
 
   console.log(listingData);
 
+  // fetch listing
+  const listing = await prisma.listing.findUnique({
+    where: {
+      id: listingData.id,
+    },
+  });
+
+  // create payment
   await prisma.listingPayment.create({
     data: {
-      listingId: listingData.id,
-      amount: parseFloat(listingData.amount),
+      listingId: listing?.id,
+      amount: parseFloat(listingData?.amount),
       buyer: listingData.buyer,
-      quantity: parseInt(listingData.quantity),
+      quantity: parseInt(listingData?.quantity),
+    },
+  });
+
+  //update sold
+  await prisma.listing.update({
+    where: {
+      id: listingData.id,
+    },
+    data: {
+      sold: parseInt(parseInt(listingData?.quantity) + listing?.sold),
     },
   });
 
