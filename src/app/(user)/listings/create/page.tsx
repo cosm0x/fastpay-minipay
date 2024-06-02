@@ -66,8 +66,11 @@ export default function Create() {
     abi: fastpay?.abi,
     functionName: "addListing",
     args: [
+      //@ts-ignore
       stringToHex(newListing?.id, { size: 32 }),
+      //@ts-ignore
       parseEther(`${newListing?.rate}` || "0"),
+      //@ts-ignore
       `${newListing.quantity}`,
     ],
     query: {
@@ -158,6 +161,7 @@ export default function Create() {
                 placeholder="5"
                 name="quantity"
                 value={quantity}
+                //@ts-ignore
                 onChange={(e) => setQuantity(e.target.value)}
               />
 

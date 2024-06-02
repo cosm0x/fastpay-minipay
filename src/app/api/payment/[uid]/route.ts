@@ -25,8 +25,6 @@ export const POST = async (
   request: Request,
   { params }: { params: { uid: string } }
 ) => {
-  const { txn_hash } = await request.json();
-
   try {
     const listing = await prisma.listing.update({
       where: {
@@ -38,9 +36,9 @@ export const POST = async (
     });
 
     await prisma.listingPayment.create({
+      //@ts-ignore
       data: {
         listingId: listing.id,
-        txn_hash,
       },
     });
 

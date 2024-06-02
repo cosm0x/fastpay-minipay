@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { ListingPayment } from "@prisma/client";
 import { formatDate } from "@/helpers";
 

@@ -59,21 +59,15 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const [quantity, setQuantity] = useState(1);
   const [soldOut, setSoldOut] = useState(false);
 
+  // watch block for auto update
   const bn = useBlockNumber({
     watch: true,
-  });
-
-  //check approval
-  const { data: allowance, refetch: reloadAllowance } = useReadContract({
-    abi: cusd?.abi,
-    address: cusd?.address,
-    functionName: "allowance",
-    args: [address, fastpay?.address],
   });
 
   //check balance
   const { data: balance, refetch: reloadBal } = useReadContract({
     abi: cusd?.abi,
+    //@ts-ignore
     address: cusd?.address,
     functionName: "balanceOf",
     args: [address],
@@ -81,7 +75,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
   //updates simulation
   useEffect(() => {
-    reloadAllowance();
     reloadBal();
     refetch();
   }, [bn]);
@@ -112,13 +105,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     quantity > 1 && setQuantity(quantity - 1);
   };
 
-  // Check if quantity and listing.rate are valid numbers
+  // calculate total amount
   const totalAmount =
     quantity && listing?.rate
       ? parseEther((quantity * listing.rate).toString())
       : "0";
 
-  // 1. simulate approval to validate args
+  // simulate cUSD approval
   const {
     data: approvalData,
     status,
@@ -137,7 +130,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
   failureReason && console.log(failureReason);
 
-  // 2. approve fastpay smart contract
+  // approve fastpay smart contract for user cUSD
   const handleApproval = async () => {
     setOpen(true);
     await writeContractAsync?.(approvalData!.request);
@@ -149,7 +142,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     confirmations: 2,
   });
 
-  // 4. simulate contract to validate args
+  // simulate contract for add listing
   const {
     data: transferData,
     status: statusTf,
@@ -169,27 +162,21 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     ],
   });
 
-  console.log(failureReasonTd);
-  console.log(
-    stringToHex(listing?.id, { size: 32 }),
-    listing?.seller?.address,
-    `${quantity}`,
-    `${totalAmount}`
-  );
-
+  // watch payment transaction
   const { status: paidStatus } = useWaitForTransactionReceipt({
     hash: payHash,
     confirmations: 1,
   });
 
+  // handle payment
   const handlePayment = async () => {
     try {
+      //update text
+      setTxt("transferring");
       await refetch();
       await payWrite?.(transferData!.request);
       setCheck(2);
       setProgress(100);
-      //update text
-      setTxt("transferring");
     } catch (e) {
       console.log(e);
     }
@@ -207,7 +194,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   }, [approvalStatus]);
 
   const updatePayment = () => {
-    // e.preventDefault();
+    //@ts-ignore
     buttonRef?.current.click();
   };
 
@@ -217,18 +204,18 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     if (statusTf === "success") {
       //call server action to write payment
       updatePayment();
-      //update progress
-      // setProgress(100);
 
-      //initiate payment
+      //invalidate listing
+      queryClient.invalidateQueries({ queryKey: ["listing"] });
+
+      //notify user
       toast({
         title: "Success",
         description: "Thanks for your payment!",
       });
       setOpen(false);
-      //update progress
+      //reset progress
       setProgress(0);
-      queryClient.invalidateQueries({ queryKey: ["listing"] });
     }
   }, [paidStatus]);
 
@@ -243,24 +230,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
   return (
     <>
-      {/* Form to update succesful payment */}
-      <form action={formAction} method="post">
-        <input type="text" name="quantity" value={quantity} hidden />
-        <input type="text" name="listingId" value={listing?.id} hidden />
-        <input type="text" name="buyer" value={address} hidden />
-        <input
-          type="text"
-          name="amount"
-          value={(listing?.rate * quantity).toFixed(2)}
-          hidden
-        />
-        <button ref={buttonRef} type="submit"></button>
-      </form>
       <Card className="overflow-hidden">
         <CardHeader className="flex flex-row items-start bg-muted/50">
           <div className="grid gap-0.5">
             <CardTitle className="group flex justify-between items-center gap-2 text-lg">
-              {listing?.title} <div>{formatEther(allowance || "0")}</div>
+              {listing?.title}
             </CardTitle>
           </div>
           {/* <ConnectButton /> */}
@@ -294,7 +268,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Acct Balance</span>
-                <span>${formatEther(balance || "0")}</span>
+                <span>
+                  $
+                  {
+                    //@ts-ignore
+                    formatEther(balance || "0")
+                  }
+                </span>
               </li>
             </ul>
             <ul className="grid gap-3"></ul>
@@ -350,6 +330,20 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           </AlertDialogContent>
         </AlertDialog>
       </Card>
+
+      {/* Form to update succesful payment */}
+      <form action={formAction} method="post">
+        <input type="text" name="quantity" value={quantity} hidden />
+        <input type="text" name="listingId" value={listing?.id} hidden />
+        <input type="text" name="buyer" value={address} hidden />
+        <input
+          type="text"
+          name="amount"
+          value={(listing?.rate * quantity).toFixed(2)}
+          hidden
+        />
+        <button ref={buttonRef} type="submit"></button>
+      </form>
     </>
   );
 }

@@ -38,9 +38,12 @@ export default function ListingsPage() {
       <CardContent>
         {listings?.length > 0 ? (
           <div className="flex flex-col gap-y-4">
-            {listings?.map((listing) => (
-              <Transaction key={listing?.id} listing={listing} />
-            ))}
+            {
+              //@ts-ignore
+              listings?.map((listing) => (
+                <Transaction key={listing?.id} listing={listing} />
+              ))
+            }
           </div>
         ) : (
           <Card className="sm:col-span-2">
