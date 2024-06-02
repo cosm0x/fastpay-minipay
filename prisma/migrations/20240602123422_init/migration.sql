@@ -5,8 +5,8 @@ CREATE TABLE "listings" (
     "buyerId" TEXT,
     "title" VARCHAR(255) NOT NULL,
     "description" TEXT NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
-    "quantity" INTEGER NOT NULL DEFAULT 0,
+    "rate" DOUBLE PRECISION NOT NULL,
+    "quantity" INTEGER NOT NULL DEFAULT 1,
     "sold" INTEGER NOT NULL DEFAULT 0,
     "status" INTEGER NOT NULL DEFAULT 0,
     "uid" VARCHAR(5) NOT NULL,
@@ -30,8 +30,8 @@ CREATE TABLE "listing_payments" (
     "id" TEXT NOT NULL,
     "listingId" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
-    "seller" TEXT NOT NULL,
-    "txn_hash" TEXT NOT NULL,
+    "buyer" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "listing_payments_pkey" PRIMARY KEY ("id")

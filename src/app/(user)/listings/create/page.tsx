@@ -140,7 +140,13 @@ export default function Create() {
 
           <div className="grid gap-3">
             <Label htmlFor="rate">Price</Label>
-            <Input id="rate" type="number" placeholder="200" name="rate" />
+            <Input
+              id="rate"
+              type="number"
+              step="0.01"
+              placeholder="200"
+              name="rate"
+            />
           </div>
 
           <div className="grid gap-3">

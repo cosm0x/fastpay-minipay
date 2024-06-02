@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Container from "./Container";
 import ToggleMode from "./ToggleMode";
 
@@ -7,7 +8,9 @@ const Navbar = () => {
       <Container>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold">FastPay</h3>
+            <Link href="/" className="font-bold">
+              FastPay
+            </Link>
           </div>
 
           <div className="flex items-center">

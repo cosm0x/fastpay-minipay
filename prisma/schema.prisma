@@ -45,8 +45,8 @@ model ListingPayment {
   id String @id @default(cuid())
   listingId String
   amount Float
-  seller String
-  txn_hash String
+  buyer String
+  quantity Int
   createdAt   DateTime @default(now())
   
   listing      Listing     @relation(fields: [listingId], references: [id])

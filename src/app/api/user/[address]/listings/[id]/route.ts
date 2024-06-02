@@ -14,6 +14,9 @@ export const GET = async (
       where: {
         uid: params.id,
       },
+      include: {
+        seller: true,
+      },
     });
     return NextResponse.json(listing);
   } catch (e) {

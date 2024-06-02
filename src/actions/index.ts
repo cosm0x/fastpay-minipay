@@ -24,15 +24,37 @@ export async function createListing(prevState: any, formData: FormData) {
         title: listingData.title,
         description: listingData.description,
         rate: parseFloat(listingData.rate),
+        quantity: parseInt(listingData.quantity),
         uid,
         sellerId: user.id,
       },
     });
 
-    console.log(listing);
     return listing;
   } catch (e) {
     console.log(e);
     return NextResponse.json({ msg: "Bad Request" }, { status: 500 });
   }
+}
+
+export async function updateListing(prevState: any, formData: FormData) {
+  const listingData = {
+    id: formData.get("listingId"),
+    quantity: formData.get("quantity"),
+    amount: formData.get("amount"),
+    buyer: formData.get("buyer"),
+  };
+
+  console.log(listingData);
+
+  await prisma.listingPayment.create({
+    data: {
+      listingId: listingData.id,
+      amount: parseFloat(listingData.amount),
+      buyer: listingData.buyer,
+      quantity: parseInt(listingData.quantity),
+    },
+  });
+
+  return true;
 }
