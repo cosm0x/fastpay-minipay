@@ -8,7 +8,7 @@ Users on Minipay can only share phone numbers to receive payments. This is not c
 
 ## Solution
 
-FastPay lets users create listings, share links, and receive CUSD payments directly to their Minipay. It's great for small businesses, donations, and community contributions.
+FastPay lets users create listings, share links, and receive CUSD payments directly to their Minipay wallet. It's great for small businesses, donations, and community contributions.
 
 ## Demo & Transaction
 
@@ -16,9 +16,11 @@ FastPay lets users create listings, share links, and receive CUSD payments direc
 
 - [Video Demo](https://fstpay-mini.vercel.app)
 
-- [Create Listing Transaction on Demo Video (Celo Scan)](https://celoscan.io/tx/0xdaae10f46a06ec1252ca577d32df761dd6270152d82fded614090c32ae8e8350)
+- [Verified Smart Contract (Celo Mainnet)](https://celoscan.io/address/0x8Bf6608bF8E1E86c3004E3829D2D488503ED1985)
 
-- [Pay Listing Transaction on Demo Video (Celo Scan)](https://celoscan.io/tx/0xa6d3be34655d696ce9ce1ba59ecf89639b0f0666fbd230fc6dc58d8b51bcd381)
+- [Create Listing Transaction on Demo Video (Celo Mainnet)](https://celoscan.io/tx/0xdaae10f46a06ec1252ca577d32df761dd6270152d82fded614090c32ae8e8350)
+
+- [Pay Listing Transaction on Demo Video (Celo Mainnet)](https://celoscan.io/tx/0xa6d3be34655d696ce9ce1ba59ecf89639b0f0666fbd230fc6dc58d8b51bcd381)
 
 ## Tech Stack
 
