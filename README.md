@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![cover_image](https://)
 
-## Getting Started
+## FastPay Overview
 
-First, run the development server:
+FastPay is Dapp that enable users and small businesses sell easily on Minipay!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Problem
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Users on Minipay can only share phone numbers to receive payments. This is not convenient for users or small busineeses who also want to tract both payents and inventories.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Solution
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+FastPay lets users create listings, generate links and receive CUSD payments directly to their wallet. It's great for small businesses, donations, and community contributions. Its design makes blockchain interaction simple for users.
 
-## Learn More
+## Demo & Transaction
 
-To learn more about Next.js, take a look at the following resources:
+- [Live Dapp](https://fstpay-mini.vercel.app)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Video Demo](https://fstpay-mini.vercel.app)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Dapp Screenshots](https://fstpay-mini.vercel.app)
 
-## Deploy on Vercel
+- [Create Listing Transaction on Demo Video (Celo Scan)](https://)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Create Listing Transaction on Demo Video (Celo Scan)](https://)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Tech Stack
+
+- **Backend**: Solidity, Remix
+
+- **Frontend**: NextJs, Wagmi library for blockchain interaction
+
+- **Approach**: Associate listings with Minipay addresses, facilitate payments via smart contract on Celo blockchain
+
+## Future Plans (v2)
+
+- Add optional notification on received payments
+
+- Add Images and videos to listings
