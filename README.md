@@ -4,7 +4,7 @@ FastPay is a Dapp that enables users and small businesses to sell easily on Mini
 
 ## Problem
 
-Users on Minipay can only share phone numbers to receive payments. This is not convenient for users or small businesses who also want to track both payments and inventory.
+Users on Minipay can only share phone numbers to receive payments. This is inconvenient for users or small businesses who also want to track payments and inventory.
 
 ## Solution
 
