@@ -1,6 +1,6 @@
 ## FastPay Overview
 
-FastPay is Dapp that enable users and small businesses sell easily on Minipay!
+FastPay is a Dapp that enables users and small businesses to sell easily on Minipay!
 
 ## Problem
 
