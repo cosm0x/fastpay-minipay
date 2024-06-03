@@ -7,7 +7,7 @@ import Navbar from "@/components/ui/Navbar";
 import WagmiProvider from "@/providers/wagmi-provider";
 import ConnectMinipay from "@/components/ConnectMinipay";
 import { Toaster } from "@/components/ui/toaster";
-
+import { config } from "../lib/wagmi";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

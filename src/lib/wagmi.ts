@@ -8,6 +8,6 @@ export const config = createConfig({
   connectors: [injected()],
   transports: {
     //@ts-ignore
-    [celo.id]: http(`https://celo-alfajores.infura.io/v3/${apiKey}`),
+    [celoAlfajores.id]: http(`https://celo-alfajores.infura.io/v3/${apiKey}`),
   },
 });
