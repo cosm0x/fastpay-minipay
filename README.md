@@ -1,16 +1,14 @@
-![cover_image](https://)
-
 ## FastPay Overview
 
 FastPay is Dapp that enable users and small businesses sell easily on Minipay!
 
 ## Problem
 
-Users on Minipay can only share phone numbers to receive payments. This is not convenient for users or small busineeses who also want to tract both payents and inventories.
+Users on Minipay can only share phone numbers to receive payments. This is not convenient for users or small businesses who also want to track both payments and inventory.
 
 ## Solution
 
-FastPay lets users create listings, generate links and receive CUSD payments directly to their wallet. It's great for small businesses, donations, and community contributions. Its design makes blockchain interaction simple for users.
+FastPay lets users create listings, share links, and receive CUSD payments directly to their Minipay. It's great for small businesses, donations, and community contributions.
 
 ## Demo & Transaction
 
@@ -18,11 +16,9 @@ FastPay lets users create listings, generate links and receive CUSD payments dir
 
 - [Video Demo](https://fstpay-mini.vercel.app)
 
-- [Dapp Screenshots](https://fstpay-mini.vercel.app)
+- [Create Listing Transaction on Demo Video (Celo Scan)](https://celoscan.io/tx/0xdaae10f46a06ec1252ca577d32df761dd6270152d82fded614090c32ae8e8350)
 
-- [Create Listing Transaction on Demo Video (Celo Scan)](https://)
-
-- [Create Listing Transaction on Demo Video (Celo Scan)](https://)
+- [Pay Listing Transaction on Demo Video (Celo Scan)](https://celoscan.io/tx/0xa6d3be34655d696ce9ce1ba59ecf89639b0f0666fbd230fc6dc58d8b51bcd381)
 
 ## Tech Stack
 
@@ -37,3 +33,11 @@ FastPay lets users create listings, generate links and receive CUSD payments dir
 - Add optional notification on received payments
 
 - Add Images and videos to listings
+
+## Screenshots
+
+![cover_image](https://fstpay-mini.vercel.app/img/3.JPG)
+
+![cover_image](https://fstpay-mini.vercel.app/img/1.JPG)
+
+![cover_image](https://fstpay-mini.vercel.app//img/2.JPG)
