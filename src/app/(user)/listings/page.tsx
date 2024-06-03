@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 export default function ListingsPage() {
   const { address } = useAccount();
 
-  const getLinks = async () => {
+  const getListings = async () => {
     const { data } = await axios.get(`/api/user/${address}/listings`);
 
     return data;
@@ -26,7 +26,7 @@ export default function ListingsPage() {
 
   const { isPending, data: listings } = useQuery({
     queryKey: ["listings", address],
-    queryFn: getLinks,
+    queryFn: getListings,
     enabled: !!address,
   });
 

@@ -338,7 +338,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         <input
           type="text"
           name="amount"
-          value={(listing?.rate * quantity).toFixed(2)}
+          value={listing?.rate * quantity}
           hidden
         />
         <button ref={buttonRef} type="submit"></button>

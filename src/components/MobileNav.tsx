@@ -28,7 +28,7 @@ const MobileNav = () => {
           className="flex flex-col items-center justify-center p-2"
         >
           <Cog />
-          <small className="text-blue-300">Listings</small>
+          <small>Listings</small>
         </Link>
       </div>
     </nav>

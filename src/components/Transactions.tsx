@@ -20,48 +20,54 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatDate } from "../helpers";
 
 export default function Transactions() {
   const { address } = useAccount();
 
-  const getTransactions = async () => {
-    const { data } = await axios.get(`/api/user/${address}/listings/payments`);
+  const getListings = async () => {
+    const { data } = await axios.get(`/api/user/${address}/listings`);
     console.log(data);
     return data;
   };
 
-  const { isPending, data: transactions } = useQuery({
-    queryKey: ["txns", address],
-    queryFn: getTransactions,
+  const { isPending, data: listings } = useQuery({
+    queryKey: ["listings", address],
+    queryFn: getListings,
     enabled: !!address,
   });
 
   return (
     <Card>
       <CardHeader className="px-7">
-        <CardTitle>Payments</CardTitle>
-        <CardDescription>Recent payments from your listings.</CardDescription>
+        <CardTitle>Recent listings</CardTitle>
       </CardHeader>
       <CardContent>
-        {transactions?.length > 0 ? (
+        {listings?.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="sm:table-cell">Date</TableHead>
                 <TableHead className="sm:table-cell">Status</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-right">Sold</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell className="table-cell">2023-06-23 17:32 </TableCell>
-                <TableCell className="table-cell">
-                  <Badge className="text-xs" variant="secondary">
-                    Fulfilled
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">$250.00</TableCell>
-              </TableRow>
+              {listings?.map((l) => (
+                <TableRow key={l?.id}>
+                  <TableCell className="table-cell">
+                    {formatDate(l?.createdAt)}
+                  </TableCell>
+                  <TableCell className="table-cell">
+                    {l?.quantity - l?.sold == 0 && (
+                      <Badge className="text-xs" variant="secondary">
+                        {"soldOut "}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">x{l?.sold}</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         ) : (

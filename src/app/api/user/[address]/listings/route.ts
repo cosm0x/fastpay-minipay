@@ -10,12 +10,12 @@ export const GET = async (
     //resolves user
     const user = await resolveUser(params.address);
 
-    const listing = await prisma.listing.findMany({
+    const listings = await prisma.listing.findMany({
       where: {
         sellerId: user.id,
       },
     });
-    return NextResponse.json(listing);
+    return NextResponse.json(listings);
   } catch (e) {
     console.log(e);
     return NextResponse.json({ msg: "Bad Request" }, { status: 500 });

@@ -24,9 +24,7 @@ export const GET = async (
       },
     });
 
-    const totalAmount = payments.reduce((acc, item) => acc + item.amount, 0);
-
-    return NextResponse.json({ payments, totalAmount });
+    return NextResponse.json(payments);
   } catch (e) {
     console.log(e);
     return NextResponse.json({ msg: "Bad Request" }, { status: 500 });

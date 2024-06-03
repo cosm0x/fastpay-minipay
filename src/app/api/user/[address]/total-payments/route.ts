@@ -39,16 +39,10 @@ export const GET = async (
       throw Error("invalid listing");
     }
 
-    const [total] = sumPayments(listings);
-    let totalAmount;
+    const totalArray = sumPayments(listings);
+    const total = totalArray.reduce((acc: any, curr: any) => acc + curr, 0);
 
-    if (total == undefined) {
-      totalAmount = 0;
-    } else {
-      totalAmount = total;
-    }
-    console.log(totalAmount);
-    return NextResponse.json(totalAmount);
+    return NextResponse.json(total);
   } catch (e) {
     console.log(e);
     return NextResponse.json({ msg: "Bad Request" }, { status: 500 });

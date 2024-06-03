@@ -15,8 +15,8 @@ const Payments = () => {
     const { data } = await axios.get(
       `/api/user/${address}/listings/${params?.id}/payments`
     );
-    console.log(data);
-    return data.payments;
+
+    return data;
   };
 
   const { isPending: isLoading, data: payments } = useQuery({
@@ -24,8 +24,6 @@ const Payments = () => {
     queryFn: getPayments,
     enabled: !!address && !!params,
   });
-
-  payments && console.log(payments);
 
   return (
     <div className="flex flex-col gap-y-3">
