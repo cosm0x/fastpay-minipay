@@ -53,7 +53,7 @@ export default function Transactions() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {listings?.map((l) => (
+              {listings?.map((l: any) => (
                 <TableRow key={l?.id}>
                   <TableCell className="table-cell">
                     {formatDate(l?.createdAt)}
