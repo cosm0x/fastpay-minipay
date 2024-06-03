@@ -13,7 +13,6 @@ import fastpay from "@/constants/fastpay";
 import { parseEther, stringToHex } from "viem";
 import { createListing } from "@/actions";
 import { useFormState, useFormStatus } from "react-dom";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import {
   useWriteContract,
@@ -116,7 +115,6 @@ export default function Create() {
 
   return (
     <div className="relative flex-col items-start gap-8 md:flex">
-      <ConnectButton />
       <form action={formAction} className="grid w-full items-start gap-6">
         <fieldset className="grid gap-6 rounded-lg border p-4">
           <legend className="-ml-1 px-1 text-sm font-medium">

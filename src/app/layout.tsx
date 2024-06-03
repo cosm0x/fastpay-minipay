@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Pancake from "@/components/ui/Pancake";
 import Navbar from "@/components/ui/Navbar";
-import MobileNav from "@/components/MobileNav";
 import WagmiProvider from "@/providers/wagmi-provider";
 import ConnectMinipay from "@/components/ConnectMinipay";
 import { Toaster } from "@/components/ui/toaster";
