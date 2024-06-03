@@ -3,12 +3,19 @@
 import Link from "next/link";
 import { ChevronRight, Close, Cog, Home, Up } from "../icons";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 const MobileNav = () => {
   const [isOpen, setIsopen] = useState(false);
+  const path = usePathname();
 
+  console.log(path);
   return (
-    <nav className="fixed bottom-0 z-10 rounded-t-2xl  backdrop-blur-sm w-full p-4 lg:hidden">
+    <nav
+      className={`${
+        path.includes("/p") && "hidden"
+      } fixed bottom-0 z-10 rounded-t-2xl  backdrop-blur-sm w-full p-4 lg:hidden`}
+    >
       <div className="text-foreground flex justify-between items-center border rounded-lg px-5">
         <Link
           href={"/user"}
