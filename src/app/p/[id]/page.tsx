@@ -83,7 +83,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     const { data } = await axios.get(
       `/api/user/${address}/listings/${params?.id}`
     );
-    console.log(data);
     return data;
   };
 

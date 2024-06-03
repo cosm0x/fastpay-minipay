@@ -1,5 +1,5 @@
 const fastpay = {
-  address: "0x1Ff189C2FBaD76e648aF0916529852324F3e689a",
+  address: "0x8Bf6608bF8E1E86c3004E3829D2D488503ED1985",
   abi: [
     {
       inputs: [
