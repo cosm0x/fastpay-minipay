@@ -14,7 +14,7 @@ FastPay lets users create listings, share links, and receive CUSD payments direc
 
 - [Live Dapp](https://fstpay-mini.vercel.app)
 
-- [Video Demo](https://youtu.be/UOVAbRmnUiI)
+- [Video Demo](https://www.youtube.com/watch?v=80Nnq8_UnE0)
 
 - [Verified Smart Contract (Celo Mainnet)](https://celoscan.io/address/0x8Bf6608bF8E1E86c3004E3829D2D488503ED1985)
 
@@ -35,6 +35,8 @@ FastPay lets users create listings, share links, and receive CUSD payments direc
 - Add optional notification on received payments
 
 - Add Images and videos to listings
+
+- Add public listing page for verified businesses (Marketplace)
 
 ## Screenshots
 
